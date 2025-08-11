@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TuProyecto.Models
 {
@@ -22,7 +21,5 @@ namespace TuProyecto.Models
         [Required(ErrorMessage = "El correo es obligatorio")]
         [EmailAddress(ErrorMessage = "Formato de correo inválido")]
         public string Correo { get; set; }
-
-        public DateTime FechaRegistro { get; set; } = DateTime.Now;
     }
 }

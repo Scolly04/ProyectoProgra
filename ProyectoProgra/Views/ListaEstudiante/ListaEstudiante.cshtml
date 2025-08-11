@@ -23,7 +23,6 @@
                     <th>Nombre Completo</th>
                     <th>Edad</th>
                     <th>Correo</th>
-                    <th>Fecha Registro</th>
                 </tr>
             </thead>
             <tbody id="studentTable">
@@ -36,14 +35,13 @@
                             <td>@estudiante.Nombre @estudiante.Apellido</td>
                             <td class="text-center">@estudiante.Edad</td>
                             <td>@estudiante.Correo</td>
-                            <td class="text-center">@estudiante.FechaRegistro.ToString("dd/MM/yyyy")</td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="5" class="text-center text-muted">No hay estudiantes registrados</td>
+                        <td colspan="4" class="text-center text-muted">No hay estudiantes registrados</td>
                     </tr>
                 }
             </tbody>
