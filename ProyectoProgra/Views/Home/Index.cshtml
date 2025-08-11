@@ -2,18 +2,45 @@
     ViewData["Title"] = "Inicio";
 }
 
-<h2>Bienvenido</h2>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Bienvenido</h2>
 
-<p>
-    <a asp-controller="RegistroEstudiantesController" asp-action="RegistroEstudiantes"
-       class="btn btn-success btn-lg btn-block">
-        Registrar Estudiante
-    </a>
-</p>
+    <div class="row g-3">
 
-<p>
-    <a asp-controller="RegistroEstudiantes" asp-action="Index"
-       class="btn btn-primary btn-lg btn-block">
-        Ver Lista de Estudiantes
-    </a>
-</p>
+        <!-- Registro de Estudiantes -->
+        <div class="col-md-4">
+            <a asp-controller="RegistroEstudiantes" asp-action="RegistroEstudiantes" class="btn btn-primary w-100 py-3">
+                <i class="fas fa-user-plus fa-lg"></i> Registrar Estudiante
+            </a>
+        </div>
+
+        <!-- Lista de Estudiantes -->
+        <div class="col-md-4">
+            <a asp-controller="RegistroEstudiantes" asp-action="ListaEstudiante" class="btn btn-secondary w-100 py-3">
+                <i class="fas fa-list fa-lg"></i> Lista de Estudiantes
+            </a>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="col-md-4">
+            <a asp-controller="Dashboard" asp-action="Index" class="btn btn-success w-100 py-3">
+                <i class="fas fa-tachometer-alt fa-lg"></i> Dashboard
+            </a>
+        </div>
+
+        <!-- Reportes -->
+        <div class="col-md-4">
+            <a asp-controller="Reportes" asp-action="Index" class="btn btn-warning w-100 py-3">
+                <i class="fas fa-file-alt fa-lg"></i> Reportes
+            </a>
+        </div>
+
+        <!-- Estudiante -->
+        <div class="col-md-4">
+            <a asp-controller="Estudiante" asp-action="Estudiante" class="btn btn-info w-100 py-3">
+                <i class="fas fa-user fa-lg"></i> Estudiante
+            </a>
+        </div>
+
+    </div>
+</div>

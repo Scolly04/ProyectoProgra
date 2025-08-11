@@ -1,34 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TuProyecto.Models;
-using System.Collections.Generic;
 
 namespace TuProyecto.Controllers
 {
     public class RegistroEstudiantesController : Controller
     {
-        // Lista simulando una base de datos (puedes reemplazar por EF Core)
-        private static List<Estudiante> estudiantes = new List<Estudiante>();
-
+        // GET: RegistroEstudiantes/RegistroEstudiantes
         public IActionResult RegistroEstudiantes()
         {
-            return View();
+            return View("~/Views/RegistroEstudiantes/RegistroEstudiantes.cshtml");
         }
 
-        [HttpPost]
-        public IActionResult RegistroEstudiantes(Estudiante estudiante)
-        {
-            if (ModelState.IsValid)
-            {
-                estudiante.Id = estudiantes.Count + 1;
-                estudiantes.Add(estudiante);
-                return RedirectToAction("ListaEstudiante", "RegistroEstudiantes");
-            }
-            return View(estudiante);
-        }
-
+        // GET: RegistroEstudiantes/ListaEstudiante
         public IActionResult ListaEstudiante()
         {
-            return View(estudiantes);
+            return View("~/Views/ListaEstudiante/ListaEstudiante.cshtml");
         }
     }
 }

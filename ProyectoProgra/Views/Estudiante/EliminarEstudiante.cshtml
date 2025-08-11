@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Eliminar Estudiante";
+}
+
+<h2>Eliminar Estudiante</h2>
+<p>¿Seguro que quieres eliminar al estudiante con ID: @ViewBag.Id?</p>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Estudiante" class="btn btn-secondary">Cancelar</a>
+</form>
