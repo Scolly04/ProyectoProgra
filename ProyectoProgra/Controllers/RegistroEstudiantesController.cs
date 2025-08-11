@@ -2,59 +2,30 @@
 using System.Data;
 using System.Data.SqlClient;
 using TuProyecto.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace TuProyecto.Controllers
 {
     public class RegistroEstudiantesController : Controller
     {
-        private readonly string _connectionString = "Server=localhost;Database=escuelitaDB;Trusted_Connection=True;";
+        private readonly string _connectionString;
 
-        // GET: Formulario de registro
-        [HttpGet]
-        public IActionResult RegistroEstudiantes()
+        public RegistroEstudiantesController(IConfiguration configuration)
         {
-            return View();
-        }
-
-        // POST: Guardar estudiante
-        [HttpPost]
-        public IActionResult RegistroEstudiantes(Estudiante estudiante)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(estudiante);
-            }
-
-            using (SqlConnection con = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = new SqlCommand("sp_InsertarEstudiante", con))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Nombre", estudiante.Nombre);
-                cmd.Parameters.AddWithValue("@Apellido", estudiante.Apellido);
-                cmd.Parameters.AddWithValue("@Edad", estudiante.Edad);
-                cmd.Parameters.AddWithValue("@Correo", estudiante.Correo);
-
-                con.Open();
-                cmd.ExecuteNonQuery();
-            }
-
-            TempData["SweetAlertMessage"] = "Estudiante registrado correctamente";
-            TempData["SweetAlertIcon"] = "success";
-            return RedirectToAction("ListaEstudiantes");
+            _connectionString = configuration.GetConnectionString("ConexionBD");
         }
 
         // GET: Lista de estudiantes
         public IActionResult ListaEstudiantes()
         {
-            List<Estudiante> estudiantes = new List<Estudiante>();
+            var estudiantes = new List<Estudiante>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             using (SqlCommand cmd = new SqlCommand("sp_ListarEstudiantes", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 con.Open();
-
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -69,33 +40,29 @@ namespace TuProyecto.Controllers
                     }
                 }
             }
-
             return View("~/Views/ListaEstudiante/ListaEstudiante.cshtml", estudiantes);
         }
 
-        // GET: Ver detalles
-        public IActionResult Detalles(int id)
-        {
-            var estudiante = ObtenerEstudiantePorId(id);
-            if (estudiante == null) return NotFound();
-            return View(estudiante);
-        }
-
-        // GET: Editar estudiante
+        // GET: Datos para ver detalles
         [HttpGet]
-        public IActionResult Editar(int id)
+        public JsonResult Detalles(int id)
         {
             var estudiante = ObtenerEstudiantePorId(id);
-            if (estudiante == null) return NotFound();
-            return View(estudiante);
+            return Json(estudiante);
         }
 
-        // POST: Guardar cambios
+        // GET: Datos para editar
+        [HttpGet]
+        public JsonResult ObtenerParaEditar(int id)
+        {
+            var estudiante = ObtenerEstudiantePorId(id);
+            return Json(estudiante);
+        }
+
+        // POST: Editar estudiante
         [HttpPost]
         public IActionResult Editar(Estudiante estudiante)
         {
-            if (!ModelState.IsValid) return View(estudiante);
-
             using (SqlConnection con = new SqlConnection(_connectionString))
             using (SqlCommand cmd = new SqlCommand("sp_ActualizarEstudiante", con))
             {
@@ -124,7 +91,6 @@ namespace TuProyecto.Controllers
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Id", id);
-
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
@@ -146,7 +112,7 @@ namespace TuProyecto.Controllers
                 cmd.Parameters.AddWithValue("@Id", id);
                 con.Open();
 
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (var dr = cmd.ExecuteReader())
                 {
                     if (dr.Read())
                     {
@@ -161,7 +127,6 @@ namespace TuProyecto.Controllers
                     }
                 }
             }
-
             return estudiante;
         }
     }

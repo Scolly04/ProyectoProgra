@@ -24,7 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model != null && Model.Count > 0)
+                    @if (Model.Any())
                     {
                         foreach (var estudiante in Model)
                         {
@@ -35,9 +35,12 @@
                                 <td>@estudiante.Edad</td>
                                 <td>@estudiante.Correo</td>
                                 <td>
-                                    <a asp-action="Detalles" asp-route-id="@estudiante.Id" class="btn btn-info btn-sm">Ver</a>
-                                    <a asp-action="Editar" asp-route-id="@estudiante.Id" class="btn btn-warning btn-sm">Editar</a>
-                                    <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(@estudiante.Id)">Eliminar</button>
+                                    <button class="btn btn-info btn-sm" onclick="verDetalles(@estudiante.Id)">Ver</button>
+                                    <button class="btn btn-warning btn-sm" onclick="editarEstudiante(@estudiante.Id)">Editar</button>
+                                    <form id="formEliminar-@estudiante.Id" asp-action="Eliminar" asp-route-id="@estudiante.Id" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(@estudiante.Id)">Eliminar</button>
+                                    </form>
                                 </td>
                             </tr>
                         }
@@ -55,6 +58,52 @@
 </div>
 
 <script>
+    function verDetalles(id) {
+        fetch(`/RegistroEstudiantes/Detalles/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                Swal.fire({
+                    title: 'Detalles del Estudiante',
+                    html: `<b>Nombre:</b> ${data.nombre} <br>
+                           <b>Apellido:</b> ${data.apellido} <br>
+                           <b>Edad:</b> ${data.edad} <br>
+                           <b>Correo:</b> ${data.correo}`,
+                    icon: 'info'
+                });
+            });
+    }
+
+    function editarEstudiante(id) {
+        fetch(`/RegistroEstudiantes/ObtenerParaEditar/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                Swal.fire({
+                    title: 'Editar Estudiante',
+                    html:
+                        `<input id="nombre" class="swal2-input" value="${data.nombre}">
+                         <input id="apellido" class="swal2-input" value="${data.apellido}">
+                         <input id="edad" type="number" class="swal2-input" value="${data.edad}">
+                         <input id="correo" type="email" class="swal2-input" value="${data.correo}">`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar',
+                    preConfirm: () => {
+                        const estudiante = {
+                            Id: id,
+                            Nombre: document.getElementById('nombre').value,
+                            Apellido: document.getElementById('apellido').value,
+                            Edad: parseInt(document.getElementById('edad').value),
+                            Correo: document.getElementById('correo').value
+                        };
+                        return fetch('/RegistroEstudiantes/Editar', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(estudiante)
+                        });
+                    }
+                }).then(() => location.reload());
+            });
+    }
+
     function confirmarEliminar(id) {
         Swal.fire({
             title: '¿Está seguro?',
@@ -66,11 +115,7 @@
             confirmButtonText: 'Sí, eliminar'
         }).then((result) => {
             if (result.isConfirmed) {
-                const form = document.createElement('form');
-                form.method = 'post';
-                form.action = '/RegistroEstudiantes/Eliminar/' + id;
-                document.body.appendChild(form);
-                form.submit();
+                document.getElementById(`formEliminar-${id}`).submit();
             }
         });
     }
