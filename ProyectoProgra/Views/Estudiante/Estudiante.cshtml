@@ -3,31 +3,42 @@
 }
 
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Gestión de Estudiantes</h2>
+    <h2 class="text-center mb-4 fw-bold">Gestión de Estudiantes</h2>
 
-    <div class="row g-3">
-        <div class="col-md-3">
-            <a asp-action="BuscarEstudiante" class="btn btn-primary w-100 py-3">
-                <i class="fas fa-search"></i> Buscar
+    <div class="row g-3 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-action="BuscarEstudiante" class="btn btn-primary w-100 py-4 shadow-sm rounded-3 d-flex flex-column align-items-center justify-content-center">
+                <i class="fas fa-search fa-2x mb-2"></i>
+                <span class="fw-bold">Buscar</span>
             </a>
         </div>
 
-        <div class="col-md-3">
-            <a asp-action="DetalleEstudiante" asp-route-id="1" class="btn btn-info w-100 py-3">
-                <i class="fas fa-info-circle"></i> Detalle
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-action="DetalleEstudiante" asp-route-id="1" class="btn btn-info w-100 py-4 shadow-sm rounded-3 d-flex flex-column align-items-center justify-content-center">
+                <i class="fas fa-info-circle fa-2x mb-2"></i>
+                <span class="fw-bold">Detalle</span>
             </a>
         </div>
 
-        <div class="col-md-3">
-            <a asp-action="EditarEstudiante" asp-route-id="1" class="btn btn-warning w-100 py-3">
-                <i class="fas fa-edit"></i> Editar
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-action="EditarEstudiante" asp-route-id="1" class="btn btn-warning w-100 py-4 shadow-sm rounded-3 d-flex flex-column align-items-center justify-content-center">
+                <i class="fas fa-edit fa-2x mb-2"></i>
+                <span class="fw-bold">Editar</span>
             </a>
         </div>
 
-        <div class="col-md-3">
-            <a asp-action="EliminarEstudiante" asp-route-id="1" class="btn btn-danger w-100 py-3">
-                <i class="fas fa-trash"></i> Eliminar
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-action="EliminarEstudiante" asp-route-id="1" class="btn btn-danger w-100 py-4 shadow-sm rounded-3 d-flex flex-column align-items-center justify-content-center">
+                <i class="fas fa-trash fa-2x mb-2"></i>
+                <span class="fw-bold">Eliminar</span>
             </a>
         </div>
     </div>
 </div>
+
+<style>
+    a.btn:hover {
+        transform: scale(1.05);
+        transition: all 0.2s ease-in-out;
+    }
+</style>

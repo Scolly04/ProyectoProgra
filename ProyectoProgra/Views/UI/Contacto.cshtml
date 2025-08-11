@@ -1,13 +1,29 @@
 ﻿@{
     ViewData["Title"] = "Contacto";
 }
-<h1>Contacto</h1>
-<form>
-    <label>Email:</label>
-    <input type="email" name="email" />
-    <br />
-    <label>Mensaje:</label>
-    <textarea name="mensaje"></textarea>
-    <br />
-    <button type="submit">Enviar</button>
-</form>
+
+<div class="container mt-5" style="max-width: 700px;">
+    <div class="card shadow-sm border-0 rounded-4 bg-light p-4">
+        <h1 class="text-center fw-bold text-primary mb-4">
+            <i class="fas fa-envelope me-2"></i> Contacto
+        </h1>
+
+        <form method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label fw-bold">Email</label>
+                <input type="email" name="email" id="email" class="form-control" placeholder="ejemplo@correo.com" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="mensaje" class="form-label fw-bold">Mensaje</label>
+                <textarea name="mensaje" id="mensaje" class="form-control" rows="5" placeholder="Escribe tu mensaje aquí..." required></textarea>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary fw-bold py-2">
+                    <i class="fas fa-paper-plane me-2"></i> Enviar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

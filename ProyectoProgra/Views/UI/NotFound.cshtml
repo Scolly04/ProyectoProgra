@@ -1,5 +1,22 @@
 ﻿@{
     ViewData["Title"] = "Página No Encontrada";
 }
-<h1>404 - Página No Encontrada</h1>
-<p>Lo sentimos, no pudimos encontrar la página solicitada.</p>
+
+<div class="container text-center my-5">
+    <h1 class="display-4 text-danger fw-bold">404</h1>
+    <h2 class="mb-3">Página No Encontrada</h2>
+    <p class="lead mb-4">
+        Lo sentimos, no pudimos encontrar la página solicitada.
+        Verifica la dirección o regresa a la página principal.
+    </p>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg shadow">
+        Volver al Inicio
+    </a>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+</style>
+
