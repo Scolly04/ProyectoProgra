@@ -2,10 +2,25 @@
     ViewData["Title"] = "Eliminar Estudiante";
 }
 
-<h2>Eliminar Estudiante</h2>
-<p>¿Seguro que quieres eliminar al estudiante con ID: @ViewBag.Id?</p>
+<div class="container mt-5" style="max-width: 700px;">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10">
+            <div class="card shadow-sm border-0 rounded-4 bg-light p-4 text-center">
+                <h2 class="text-danger mb-3">Eliminar Estudiante</h2>
+                <p class="mb-4">
+                    ¿Seguro que quieres eliminar al estudiante con
+                    <span class="fw-bold text-primary">ID: @ViewBag.Id</span>?
+                </p>
 
-<form method="post">
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a asp-action="Estudiante" class="btn btn-secondary">Cancelar</a>
-</form>
+                <form method="post" class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <button type="submit" class="btn btn-danger fw-bold px-4">
+                        <i class="bi bi-trash-fill me-2"></i> Eliminar
+                    </button>
+                    <a asp-action="Estudiante" class="btn btn-secondary fw-bold px-4">
+                        <i class="bi bi-x-circle me-2"></i> Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
