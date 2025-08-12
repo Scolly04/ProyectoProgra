@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 using TuProyecto.Models;
 
 namespace TuProyecto.Controllers
@@ -16,8 +17,9 @@ namespace TuProyecto.Controllers
             return View();
         }
 
-        // POST: Guardar estudiante
+        // POST: Guardar estudiante (nuevo)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RegistroEstudiantes(Estudiante estudiante)
         {
             if (!ModelState.IsValid)
@@ -43,7 +45,8 @@ namespace TuProyecto.Controllers
             return RedirectToAction("ListaEstudiantes");
         }
 
-        // GET: Lista de estudiantes
+        // GET: Lista de estudiantes (vista completa)
+        [HttpGet]
         public IActionResult ListaEstudiantes()
         {
             List<Estudiante> estudiantes = new List<Estudiante>();
@@ -73,50 +76,62 @@ namespace TuProyecto.Controllers
             return View("~/Views/ListaEstudiante/ListaEstudiante.cshtml", estudiantes);
         }
 
-        // GET: Ver detalles
-        public IActionResult Detalles(int id)
-        {
-            var estudiante = ObtenerEstudiantePorId(id);
-            if (estudiante == null) return NotFound();
-            return View(estudiante);
-        }
-
-        // GET: Editar estudiante
+        // GET: Obtener estudiante por id para mostrar en modal (Detalles y Editar)
         [HttpGet]
-        public IActionResult Editar(int id)
+        public JsonResult ObtenerEstudiante(int id)
         {
             var estudiante = ObtenerEstudiantePorId(id);
-            if (estudiante == null) return NotFound();
-            return View(estudiante);
+            if (estudiante == null)
+                return Json(new { success = false, message = "Estudiante no encontrado" });
+
+            return Json(new { success = true, data = estudiante });
         }
 
-        // POST: Guardar cambios
+        // AJAX: Actualizar estudiante desde modal
         [HttpPost]
-        public IActionResult Editar(Estudiante estudiante)
+        [ValidateAntiForgeryToken]
+        public JsonResult ActualizarEstudiante(Estudiante estudiante)
         {
-            if (!ModelState.IsValid) return View(estudiante);
-
-            using (SqlConnection con = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = new SqlCommand("sp_ActualizarEstudiante", con))
+            // Validaciones adicionales para evitar enviar valores inválidos al SP
+            if (string.IsNullOrWhiteSpace(estudiante.Nombre) ||
+                string.IsNullOrWhiteSpace(estudiante.Apellido) ||
+                string.IsNullOrWhiteSpace(estudiante.Correo) ||
+                estudiante.Edad <= 0)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Id", estudiante.Id);
-                cmd.Parameters.AddWithValue("@Nombre", estudiante.Nombre);
-                cmd.Parameters.AddWithValue("@Apellido", estudiante.Apellido);
-                cmd.Parameters.AddWithValue("@Edad", estudiante.Edad);
-                cmd.Parameters.AddWithValue("@Correo", estudiante.Correo);
-
-                con.Open();
-                cmd.ExecuteNonQuery();
+                return Json(new { success = false, message = "Complete todos los campos correctamente." });
             }
 
-            TempData["SweetAlertMessage"] = "Estudiante actualizado correctamente";
-            TempData["SweetAlertIcon"] = "success";
-            return RedirectToAction("ListaEstudiantes");
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Datos inválidos" });
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlCommand cmd = new SqlCommand("sp_ActualizarEstudiante", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", estudiante.Id);
+                    cmd.Parameters.AddWithValue("@Nombre", estudiante.Nombre);
+                    cmd.Parameters.AddWithValue("@Apellido", estudiante.Apellido);
+                    cmd.Parameters.AddWithValue("@Edad", estudiante.Edad);
+                    cmd.Parameters.AddWithValue("@Correo", estudiante.Correo);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                return Json(new { success = true, message = "Estudiante actualizado correctamente" });
+            }
+            catch (SqlException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
-        // POST: Eliminar estudiante
+        // POST: Eliminar estudiante (redirecciona a ListaEstudiantes)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Eliminar(int id)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -134,7 +149,7 @@ namespace TuProyecto.Controllers
             return RedirectToAction("ListaEstudiantes");
         }
 
-        // Método privado para reutilizar
+        // Método privado para obtener estudiante por Id
         private Estudiante ObtenerEstudiantePorId(int id)
         {
             Estudiante estudiante = null;

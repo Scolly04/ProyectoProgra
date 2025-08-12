@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using TuProyecto.Models;
 
 namespace TuProyecto.Controllers
@@ -16,18 +18,17 @@ namespace TuProyecto.Controllers
         }
 
         // GET: Lista de estudiantes
-        public IActionResult Lista()
+        public async Task<IActionResult> Lista()
         {
             var estudiantes = new List<Estudiante>();
 
             using (var con = new SqlConnection(_connectionString))
+            using (var cmd = new SqlCommand("SELECT Id, Nombre, Apellido, Edad, Correo FROM Estudiante", con))
             {
-                con.Open();
-                var query = "SELECT Id, Nombre, Apellido, Edad, Correo FROM Estudiante";
-                using (var cmd = new SqlCommand(query, con))
-                using (var dr = cmd.ExecuteReader())
+                await con.OpenAsync();
+                using (var dr = await cmd.ExecuteReaderAsync())
                 {
-                    while (dr.Read())
+                    while (await dr.ReadAsync())
                     {
                         estudiantes.Add(new Estudiante
                         {
@@ -40,6 +41,7 @@ namespace TuProyecto.Controllers
                     }
                 }
             }
+
             return View(estudiantes);
         }
 
@@ -51,25 +53,28 @@ namespace TuProyecto.Controllers
 
         // POST: Guardar estudiante
         [HttpPost]
-        public IActionResult Registrar(Estudiante estudiante)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Registrar(Estudiante estudiante)
         {
             if (!ModelState.IsValid)
                 return View(estudiante);
 
             using (var con = new SqlConnection(_connectionString))
+            using (var cmd = new SqlCommand("INSERT INTO Estudiante (Nombre, Apellido, Edad, Correo) VALUES (@Nombre, @Apellido, @Edad, @Correo)", con))
             {
-                con.Open();
-                var query = "INSERT INTO Estudiante (Nombre, Apellido, Edad, Correo) VALUES (@Nombre, @Apellido, @Edad, @Correo)";
-                using (var cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@Nombre", estudiante.Nombre);
-                    cmd.Parameters.AddWithValue("@Apellido", estudiante.Apellido);
-                    cmd.Parameters.AddWithValue("@Edad", estudiante.Edad);
-                    cmd.Parameters.AddWithValue("@Correo", estudiante.Correo);
-                    cmd.ExecuteNonQuery();
-                }
+                cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar, 50).Value = estudiante.Nombre;
+                cmd.Parameters.Add("@Apellido", SqlDbType.NVarChar, 50).Value = estudiante.Apellido;
+                cmd.Parameters.Add("@Edad", SqlDbType.Int).Value = estudiante.Edad;
+                cmd.Parameters.Add("@Correo", SqlDbType.NVarChar, 100).Value = estudiante.Correo;
+
+                await con.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
             }
-            return RedirectToAction("Lista");
+
+            TempData["SweetAlertMessage"] = "Estudiante registrado correctamente";
+            TempData["SweetAlertIcon"] = "success";
+
+            return RedirectToAction(nameof(Lista));
         }
     }
 }
