@@ -64,10 +64,10 @@
                                     <td class="td-edad">@estudiante.Edad</td>
                                     <td class="td-correo">@estudiante.Correo</td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning me-1" onclick="abrirEditar(@estudiante.Id)">
+                                        <button type="button" class="btn btn-sm btn-warning me-1" onclick="abrirEditar(@estudiante.Id)">
                                             <i class="fas fa-edit"></i> Editar
                                         </button>
-                                        <button class="btn btn-sm btn-danger" onclick="confirmarEliminar(@estudiante.Id)">
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmarEliminar(@estudiante.Id)">
                                             <i class="fas fa-trash"></i> Eliminar
                                         </button>
                                     </td>
@@ -96,24 +96,24 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-                <form id="formEditar">
+                <form id="formEditar" method="post" novalidate>
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="form-id" name="Id" />
                     <div class="row g-2">
                         <div class="col-md-6">
-                            <label class="form-label">Nombre</label>
+                            <label for="form-nombre" class="form-label">Nombre</label>
                             <input type="text" id="form-nombre" name="Nombre" class="form-control" required />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Apellido</label>
+                            <label for="form-apellido" class="form-label">Apellido</label>
                             <input type="text" id="form-apellido" name="Apellido" class="form-control" required />
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Edad</label>
+                            <label for="form-edad" class="form-label">Edad</label>
                             <input type="number" min="1" max="120" id="form-edad" name="Edad" class="form-control" required />
                         </div>
                         <div class="col-md-8">
-                            <label class="form-label">Correo</label>
+                            <label for="form-correo" class="form-label">Correo</label>
                             <input type="email" id="form-correo" name="Correo" class="form-control" required />
                         </div>
                     </div>
@@ -222,6 +222,7 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
+                // Crear un formulario para enviar POST con antiforgery token
                 const form = document.createElement('form');
                 form.method = 'post';
                 form.action = '/RegistroEstudiantes/Eliminar/' + id;
@@ -241,13 +242,13 @@
     // Mostrar mensaje SweetAlert al cargar la página si existe TempData
     @if (TempData["SweetAlertMessage"] != null)
     {
-                    <text>
-                        Swal.fire({
-                            icon: '@TempData["SweetAlertIcon"]',
-                            title: '@TempData["SweetAlertMessage"]',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    </text>
+            <text>
+            Swal.fire({
+                icon: '@TempData["SweetAlertIcon"]',
+                title: '@TempData["SweetAlertMessage"]',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            </text>
     }
 </script>

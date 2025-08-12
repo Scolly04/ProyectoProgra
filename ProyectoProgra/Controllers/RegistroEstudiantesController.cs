@@ -16,6 +16,13 @@ namespace TuProyecto.Controllers
             _connectionString = configuration.GetConnectionString("ConexionBD");
         }
 
+        // GET: Formulario de registro (para mostrar el formulario vacío)
+        [HttpGet]
+        public IActionResult RegistroEstudiantes()
+        {
+            return View();
+        }
+
         // POST: Guardar estudiante (nuevo)
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -89,7 +96,6 @@ namespace TuProyecto.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult ActualizarEstudiante(Estudiante estudiante)
         {
-            // Validaciones adicionales para evitar enviar valores inválidos al SP
             if (string.IsNullOrWhiteSpace(estudiante.Nombre) ||
                 string.IsNullOrWhiteSpace(estudiante.Apellido) ||
                 string.IsNullOrWhiteSpace(estudiante.Correo) ||
