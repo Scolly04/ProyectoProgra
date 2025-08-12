@@ -20,7 +20,7 @@ namespace TuProyecto.Controllers
         // GET: Lista de estudiantes
         public async Task<IActionResult> Lista()
         {
-            var estudiantes = new List<Estudiante>();
+            List<Estudiante> estudiantes = new List<Estudiante>();
 
             using (var con = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand("SELECT Id, Nombre, Apellido, Edad, Correo FROM Estudiante", con))
@@ -45,13 +45,14 @@ namespace TuProyecto.Controllers
             return View(estudiantes);
         }
 
-        // GET: Formulario de registro
-        public IActionResult Registrar()
+        // GET: Formulario para RegistroEstudiantes
+        [HttpGet]
+        public IActionResult RegistroEstudiantes()
         {
             return View();
         }
 
-        // POST: Guardar estudiante
+        // POST: RegistroEstudiantes estudiante
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registrar(Estudiante estudiante)
@@ -75,6 +76,36 @@ namespace TuProyecto.Controllers
             TempData["SweetAlertIcon"] = "success";
 
             return RedirectToAction(nameof(Lista));
+        }
+
+        // Método privado para obtener estudiante por ID
+        private Estudiante ObtenerEstudiantePorId(int id)
+        {
+            Estudiante estudiante = null;
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("sp_ObtenerEstudiantePorId", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", id);
+                con.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        estudiante = new Estudiante
+                        {
+                            Id = dr.GetInt32(0),
+                            Nombre = dr.GetString(1),
+                            Apellido = dr.GetString(2),
+                            Edad = dr.GetInt32(3),
+                            Correo = dr.GetString(4)
+                        };
+                    }
+                }
+            }
+
+            return estudiante;
         }
     }
 }

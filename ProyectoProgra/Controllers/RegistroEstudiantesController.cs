@@ -3,18 +3,17 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using TuProyecto.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace TuProyecto.Controllers
 {
     public class RegistroEstudiantesController : Controller
     {
-        private readonly string _connectionString = "Server=localhost;Database=escuelitaDB;Trusted_Connection=True;";
+        private readonly string _connectionString;
 
-        // GET: Formulario de registro
-        [HttpGet]
-        public IActionResult RegistroEstudiantes()
+        public RegistroEstudiantesController(IConfiguration configuration)
         {
-            return View();
+            _connectionString = configuration.GetConnectionString("ConexionBD");
         }
 
         // POST: Guardar estudiante (nuevo)
@@ -49,15 +48,14 @@ namespace TuProyecto.Controllers
         [HttpGet]
         public IActionResult ListaEstudiantes()
         {
-            List<Estudiante> estudiantes = new List<Estudiante>();
+            var estudiantes = new List<Estudiante>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             using (SqlCommand cmd = new SqlCommand("sp_ListarEstudiantes", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 con.Open();
-
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -72,7 +70,6 @@ namespace TuProyecto.Controllers
                     }
                 }
             }
-
             return View("~/Views/ListaEstudiante/ListaEstudiante.cshtml", estudiantes);
         }
 
@@ -139,7 +136,6 @@ namespace TuProyecto.Controllers
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Id", id);
-
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
@@ -161,7 +157,7 @@ namespace TuProyecto.Controllers
                 cmd.Parameters.AddWithValue("@Id", id);
                 con.Open();
 
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (var dr = cmd.ExecuteReader())
                 {
                     if (dr.Read())
                     {
@@ -176,7 +172,6 @@ namespace TuProyecto.Controllers
                     }
                 }
             }
-
             return estudiante;
         }
     }
